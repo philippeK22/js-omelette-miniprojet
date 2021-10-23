@@ -23,23 +23,16 @@ class Personne {
     }
 
 
-    // seDeplacer(a, b) {
-      
-    //     // verifie si la personne est dans la maison si oui fait lui splice dedans avec une condition
-    //     b.personne.push(this);
-    //     a.personne.splice(a.personne.indexOf(this, 1));
-    //     //epicerie vaut b
-    // }
+    payerArticle(article) {
+        this.argent = this.argent - article.prix;
+        console.log(`${philippe.nom} a payé ${article.prix}€ pour acheter ${article.nom}`);
 
-    payerArticle(a) {
-        return this.argent -= a;
-     
+    
+    }
 
-
-    };
-    couper=(a)=>{
-        if (a.etat == "entier") {
-            return `j'utilise ${outils.nom} pour ${couper.action} ${a.nom}`
+    couper=(ingredient,outil)=>{
+        if (ingredient.etat == "entier") {
+            outil.action(ingredient)
         }
         
         
@@ -47,9 +40,12 @@ class Personne {
 
     }
 }
+     
+
+
 
 //instances de la classe de personne 
-let philippe = new Personne("philippe","maison", 100,[],[]);
+let philippe = new Personne("philippe","maison", 150,[],[]);
 
        
 // -------------------------------------------------------------------------------------------
@@ -68,17 +64,6 @@ class Lieu {
 }
 
 // ------------------------------------------------------------------------------------------
-
-
-
-let maison = {
-    nom: "maison",
-    personne: ["philippe"],
-}
-
-maison = new Lieu("maison", []);
-
-
 class Epicerie extends Lieu {
     constructor(nom) {
         super(nom)
@@ -92,8 +77,17 @@ class Epicerie extends Lieu {
         
     };
 }
-let epicerie = new Epicerie("maison", []);
-console.log(epicerie);
+
+let maison = {
+    nom: "maison",
+    personne: ["philippe"],
+}
+maison = new Lieu("maison", []);
+let epicerie = new Epicerie("epicerie", [],[
+    {nom : "pannier pris",contenu : []},
+    { nom: "Panier restant", contenu: [] },
+]);
+// console.log(epicerie);
 
 
 
@@ -132,14 +126,14 @@ class Poele {
     constructor(contenu){
         this.contenu = contenu;
 
-        this.cuir =(bole)=>{
-            setTimeout(() => {
-                bole.contenue.etat =="cuite"
-                return console.console.log("omelette est cuit");
-                
-            }, 4000);
-        }
-
+        
+    }
+    cuir =()=>{
+        setTimeout(() => {
+            bole.contenu.etat =="cuite"
+            return console.log("omelette est cuit");
+            
+        }, 4000);
     }
 }
 
@@ -171,78 +165,100 @@ let bole = new Bol([]);
 
                           // Début omelette
 
-
-
-
-
 philippe.changeLieuParDefaut(epicerie.getNom());
-console.log();
-console.log(`${philippe.nom} est actuellement à la ${philippe.lieu}`);
-console.log(`${philippe.nom} se déplace de la ${philippe.lieu} à l'${jo.lieu}`);
+console.log(`${philippe.nom} est actuellement à la ${maison.nom}`);
+
+console.log(`${philippe.nom} se déplace de la ${maison.nom} à l'${epicerie.nom}`);
 console.log(epicerie.paniers[0]);
+
 philippe.mainDroite.push(epicerie.paniers[0]);
 console.log(philippe.mainDroite);
+
+console.log("**********************************************");
+
 epicerie.paniers.shift();
 console.log(epicerie.paniers);
-console.log(`${philippe.nom} à pris un type ${epicerie.paniers}`);
+
+console.log(`${philippe.nom} à pris un type ${epicerie.paniers[0]}`);
+
 console.log(philippe.mainDroite);
 console.log(tab);
+console.log("********************************");
 
-philippe.mainDroite[0].contenu.forEach(element => {
-    console.log(`${philippe.nom} achète un ${jo.nom} pour ${jo.prix}  euro`);
+tab.forEach(element => {
+    console.log(`${philippe.nom} achète un ${element.nom} pour ${element.prix}  euro`);
     philippe.payerArticle(element);
 
 });
-tab.forEach(element => {
-    console.log("je prends 1 " + element.nom);
-    
 
+tab.forEach(element => {
+    philippe.mainDroite[0].contenu.push(element);
+    console.log(`${philippe.nom} a pris un ${element.nom}`);
+    
 });
-console.log("Dans ma main droite mon panier remplis: " , philippe.mainDroite)
-console.log("Mon argent avant de payer   " , philippe.argent)
+philippe.mainDroite.push(epicerie.paniers[0]);
+epicerie.paniers.splice(epicerie.paniers.indexOf(philippe.mainDroite[0]),1);
+
+console.log("Dans ma main droite mon panier remplis: " , philippe.mainDroite);
+console.log("Mon argent avant de payer " , philippe.argent,"euro");
+
 for (let index = 0; index < philippe.mainDroite[0].contenu.length; index++) {
-    const element = philippe.mainDroite[0].contenu[index];
-    philippe.payerArticle(philippe.prix)
-    console.log(`${philippe.nom} pour une somme de ${jo.prix} euros `)
+   const element = philippe.mainDroite[0].contenu[index];
+    philippe.payerArticle(philippe.argent)
+    console.log(`${philippe.nom} paye pour une somme de ${element.prix} euros`);
+    
 }
 
+philippe.mainDroite[0].contenu.forEach(element => {
+    philippe.payerArticle(element);
+    console.log(`${philippe.nom} achete un ${element.nom} au pris: de ${element.prix} euros`);
+    
+});
 
-console.log(`solde de votre compte : ${philippe.argent}`);
+
+console.log(`le solde de votre compte : ${philippe.argent}`);
+
+philippe.changeLieuParDefaut(epicerie.getNom());
+console.log(`${philippe.nom} rentre à la ${maison.nom} pour cuisiner`);
+
 
 philippe.mainDroite[0].contenu = [];
 console.log(philippe.mainDroite[0].contenu);
 
-// philippe.seDeplacer(maison, epicerie); //bouge à l'épicerie
+philippe.mainDroite.forEach(element => {
+    bole.contenu.push(element)
+    console.log(`${element.nom} a été ajouté dans le bol`);
+   
+});
+console.log(philippe.mainDroite[0].contenu);
+
+philippe.changeLieuParDefaut(epicerie.getNom());
 console.log(`${philippe.nom} est partie à l'${epicerie.nom} deposer le paniers`);
 console.log(`${philippe.nom} dépose le panier`);
 
-// philippe.seDeplacer(maison, epicerie); //bouge à la maison
-console.log(`${philippe.nom} est actuellement à la ${maison.nom}`);
-console.log('mon omelette avance à grand pas'); // afficher un message
-
-let contenu_panier = philippe.mainDroite[0].contenu
-let ingredients_oeufs = philippe.mainDroite[0].contenu
-
-ingredients_oeufs.forEach(element => {
-    bole.contenu.push(element)
-    console.table(element , "ajouté a mon bol")
-});
+philippe.mainDroite.pop();
+philippe.mainDroite.pop();
 console.log(philippe.mainDroite);
-console.log("Coupe des aliments :" , philippe.couper(fromage.nom , outils.nom,));
-// console.log(philippe.couper(bole.contenu[0]))
 
-for (let index = 0; index < bole.contenu.length; index++) {
-    const melange = bole.contenu[index].nom;
-    console.log("Je rajoute a mon melange : " ,melange )
-}
+philippe.changeLieuParDefaut(epicerie.getNom());
+console.log(`${maison.personne} est actuellemet à ${maison.nom}`);
 
-
+console.log('dur le project quand meme');
+bole.melanger('omelette');
+console.log(`on a fini de mélanger`);
 
 
-console.log("Suivit de mon melange   : " ,bole.melanger('omelette'))
-poele.contenu.push(bole.contenu)
+console.log("on verse le bol dans la poêle");
+poele.contenu.push(bole.contenu[0]);
+console.log("le bol est vide");
+
+console.log("Suivit de mon melange : " ,bole.melanger('omelette'));
+poele.contenu.push(bole.contenu);
 console.log(bole);
 poele.cuir();
+
+
+
 
 
 
